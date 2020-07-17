@@ -1,0 +1,56 @@
+.App {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  font-family: monospace;
+  background: #202125;
+  color: #bbc4ce;
+}
+
+header {
+  height: 4vh;
+  background: #171717;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header > .button-run {
+  background: #3FCA5C;
+  padding: 0 59px;
+  height: 100%;
+  line-height: 100%;
+  border: 0;
+  font-size: 16px;
+  color: white;
+  font-family: monospace;
+  font-weight: bold;
+}
+header > button > span {
+  font-size: 12px;
+}
+
+header > button:focus{
+  outline: 0;
+  border: 0;
+}
+header > button:hover{
+  background: #3aba4c;
+}
+header > button:active{
+  background: #33a443;
+}
+
+header > div {
+  padding: 0 8px;
+  line-height: 100%;
+}
+main {
+  display: flex;
+  height: 96vh;
+}
+main > div{
+  flex: 1;
+}
+.input {
+  padding-top: 8px;
+}
