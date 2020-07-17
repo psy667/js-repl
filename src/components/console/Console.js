@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {terminalService} from "../../services/preprocessor";
 import './Console.css';
 
-const consoleJSHeader = () => `
+const consoleJSHeader = (showLogger) => {
+    const logger = `
     const logger = (r) => {
         const element = document.createElement('p');
 
@@ -15,6 +16,8 @@ const consoleJSHeader = () => `
     console.error = (r) => logger(r);
 
 `
+    return showLogger ? logger : ``;
+}
 
 const consoleHTML = `
     <div id="logger"></div>
@@ -40,11 +43,22 @@ const consoleCSS = `
 
 `;
 
-export const ConsoleComponent = () => {
+export const ConsoleComponent = (props) => {
+    const showLogger = !props.hide;
     const [iframe, setIframe] = useState({__html: ''});
-    const createIframe = (code) => {
+
+    const createIframe = (code, showLogger) => {
         const iframeSrc = 'data:text/html;charset=utf-8,' + encodeURI(`
-            <head><title>What?</title><style type="text/css">${consoleCSS}</style></head><body>${consoleHTML}<script type="text/javascript">${consoleJSHeader()}${code}</script></body>
+            <head>
+                <title>What?</title>
+                <style type="text/css">${consoleCSS}</style>
+            </head>
+            <body>
+                ${consoleHTML}
+                <script type="text/javascript">
+                    ${consoleJSHeader(showLogger)}${code}
+                </script>
+            </body>
         `);
         const iframe = {
             __html: `<iframe class="iframe" src="${iframeSrc}"></iframe>`
@@ -54,13 +68,17 @@ export const ConsoleComponent = () => {
 
     useEffect(() => {
         terminalService.compiledCode.subscribe(r => {
-            createIframe(r);
+            createIframe(r, showLogger);
         })
-    }, [])
+    }, [showLogger])
 
     return (
-        <div className="logger-wrapper"
-             dangerouslySetInnerHTML={iframe}
-        />
+        <div>
+            <div className="logger-wrapper"
+                 style={{display: showLogger ? 'block' : 'none'}}
+                 dangerouslySetInnerHTML={iframe}
+            />
+        </div>
+
     );
 }

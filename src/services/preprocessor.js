@@ -11,6 +11,8 @@ const removeFromStr = (str, arr) => {
 }
 
 class Preprocessor{
+    currentCode = "";
+
     constructor() {
         this.compiledCode = new BehaviorSubject(null);
     }
@@ -18,7 +20,6 @@ class Preprocessor{
 
     executeCode(code){
         const processedCode = this.process(code);
-        console.log(processedCode);
         this.compiledCode.next(processedCode);
     }
 
@@ -36,14 +37,17 @@ class Preprocessor{
   `);
     }
 
-    process = (code) => {
-        return code.split('\n').map(line => {
+    process = () => {
+        const code = this.currentCode;
+        const buildId = (Math.abs(Math.random()*2e9>>0)).toString(36);
+        const metaDataArray = [`// build: ${buildId}`, `// timestamp: ${new Date().getTime()}`];
+        const resultArray = code.split('\n').map(line => {
             if (line.indexOf('import') === 0) {
                 return this.replaceImports(line)
             }
             return replaceAll(line, 'console.log', 'console.log');
-        }).join(`
-  `);
+        });
+        return [...metaDataArray, ...resultArray].join('\n');
     }
 }
 

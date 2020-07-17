@@ -54,3 +54,27 @@ main > div{
 .input {
   padding-top: 8px;
 }
+.toggle-wrapper{
+  display: flex;
+  align-items: center;
+}
+.toggle-wrapper > .toggle {
+  width: 30px;
+  padding: 2px;
+  display: flex;
+  background: #34353b;
+  margin-left: 8px;
+}
+.toggle-wrapper > .toggle span {
+  width: 15px;
+  height: 15px;
+  background: #bbc4ce;
+  transition-duration: 0.2s;
+}
+
+.toggle-wrapper > .toggle.active > span {
+  width: 15px;
+  height: 15px;
+  margin-left: 15px;
+  background: #3aba4c;
+}

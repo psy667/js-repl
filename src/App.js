@@ -1,13 +1,10 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import Editor from '@monaco-editor/react';
-import {KeyCode, KeyMod} from 'monaco-editor';
+import MonacoEditor from 'react-monaco-editor';
 import {terminalService} from "./services/preprocessor";
 import {ConsoleComponent} from "./components/console/Console";
 
 function App() {
-    const [_, setIsEditorReady] = useState(false);
-    const valueGetter = useRef();
     const defaultValue = `
 const fib = (n) => {
   let prev1 = 0n;
@@ -23,14 +20,15 @@ const fib = (n) => {
 console.log(fib(40));
     `;
 
-    function handleEditorDidMount(_valueGetter, editor) {
-        setIsEditorReady(true);
-        valueGetter.current = _valueGetter;
+    function handleEditorDidMount(editor, monaco) {
+        terminalService.currentCode = defaultValue;
+        editor.focus();
+
         editor.addAction({
             id: 'submit',
-            label: 'Submit',
+            label: 'javascript',
             keybindings: [
-                KeyMod.CtrlCmd | KeyCode.Enter,
+                monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
             ],
             run() {
                 executeCode()
@@ -38,9 +36,15 @@ console.log(fib(40));
         })
     }
 
-    function executeCode() {
-        terminalService.executeCode(valueGetter.current());
+    function handleOnChange(value) {
+        terminalService.currentCode = value;
     }
+
+    function executeCode() {
+        terminalService.executeCode();
+    }
+
+    const [nativeConsole, setNativeConsole] = useState(false);
 
     return (
         <div className="App">
@@ -48,19 +52,26 @@ console.log(fib(40));
                 <div>JS-REPL</div>
                 <button className="button-run" onClick={executeCode}>RUN<span>(ctrl+Enter)</span></button>
                 <div>GitHub</div>
+                <div className="toggle-wrapper">
+                    Native console
+                    <div onClick={() => setNativeConsole(!nativeConsole)}
+                        className={['toggle', nativeConsole ? 'active' : ''].join(' ')}><span/></div>
+                </div>
             </header>
             <main>
                 <div className="input">
-                    <Editor
+                    <MonacoEditor
+                        height="96vh"
+                        width={ nativeConsole ? "100vw" : "50vw"}
                         language="javascript"
                         value={defaultValue}
-                        height="96vh"
-                        theme="dark"
+                        theme="vs-dark"
                         editorDidMount={handleEditorDidMount}
+                        onChange={handleOnChange}
                     />
                 </div>
                 <div className="output">
-                    <ConsoleComponent />
+                    <ConsoleComponent hide={nativeConsole} />
                 </div>
             </main>
         </div>
