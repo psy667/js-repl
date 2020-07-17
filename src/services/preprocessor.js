@@ -11,14 +11,31 @@ const removeFromStr = (str, arr) => {
 }
 
 class Preprocessor{
-    currentCode = "";
+    _currentCode = "";
+
+    saveCode(code) {
+        localStorage.setItem('code', code);
+    }
+
+    loadCode() {
+        return localStorage.getItem('code');
+    }
 
     constructor() {
         this.compiledCode = new BehaviorSubject(null);
+        this._currentCode = this.loadCode();
     }
 
+    getCode() {
+        return this._currentCode;
+    }
 
-    executeCode(code){
+    setCode(code) {
+        this.saveCode(code);
+    }
+
+    executeCode(){
+        const code = this._currentCode;
         const processedCode = this.process(code);
         this.compiledCode.next(processedCode);
     }
@@ -38,7 +55,7 @@ class Preprocessor{
     }
 
     process = () => {
-        const code = this.currentCode;
+        const code = this._currentCode;
         const buildId = (Math.abs(Math.random()*2e9>>0)).toString(36);
         const metaDataArray = [`// build: ${buildId}`, `// timestamp: ${new Date().getTime()}`];
         const resultArray = code.split('\n').map(line => {

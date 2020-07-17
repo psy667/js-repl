@@ -21,7 +21,6 @@ const consoleJSHeader = (showLogger) => {
 
 const consoleHTML = `
     <div id="logger"></div>
-
 `
 
 const consoleCSS = `
@@ -39,6 +38,23 @@ const consoleCSS = `
     body {
         color: rgb(187, 196, 206);
         font-family: monospace;
+    }
+    
+    ::-webkit-scrollbar {
+        width: 14px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgb(30,30,30);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgb(66,66,66);
+    }
+    
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgb(80, 80, 80);
     }
 
 `;
@@ -73,12 +89,9 @@ export const ConsoleComponent = (props) => {
     }, [showLogger])
 
     return (
-        <div>
-            <div className="logger-wrapper"
-                 style={{display: showLogger ? 'block' : 'none'}}
-                 dangerouslySetInnerHTML={iframe}
-            />
-        </div>
-
+        <div className="logger-wrapper"
+             style={{display: showLogger ? 'block' : 'none'}}
+             dangerouslySetInnerHTML={iframe}
+        />
     );
 }

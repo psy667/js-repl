@@ -5,23 +5,9 @@ import {terminalService} from "./services/preprocessor";
 import {ConsoleComponent} from "./components/console/Console";
 
 function App() {
-    const defaultValue = `
-const fib = (n) => {
-  let prev1 = 0n;
-  let prev2 = 1n;
-  for(let i = 0; i < n; i++){
-    const curVal = prev1 + prev2;
-    prev1 = prev2;
-    prev2 = curVal;
-  }
-  return prev2;
-}
-
-console.log(fib(40));
-    `;
-
+    const [defaultValue, setDefaultValue] = useState('');
     function handleEditorDidMount(editor, monaco) {
-        terminalService.currentCode = defaultValue;
+        setDefaultValue(terminalService.getCode());
         editor.focus();
 
         editor.addAction({
@@ -37,7 +23,7 @@ console.log(fib(40));
     }
 
     function handleOnChange(value) {
-        terminalService.currentCode = value;
+        terminalService.setCode(value);
     }
 
     function executeCode() {
