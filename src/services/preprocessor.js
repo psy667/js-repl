@@ -14,6 +14,7 @@ class Preprocessor{
     _currentCode = "";
 
     saveCode(code) {
+        this._currentCode = code;
         localStorage.setItem('code', code);
     }
 
