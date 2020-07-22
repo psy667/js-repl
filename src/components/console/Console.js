@@ -4,20 +4,49 @@ import './Console.css';
 
 const consoleJSHeader = (showLogger) => {
     const logger = `
-    const logger = (r) => {
+    const logger = (r, classes) => {
         const element = document.createElement('p');
-
-        element.innerHTML = '> ' + r;
+        if(classes){
+            element.classList.add(...classes);
+        }
+        if(typeof r === 'object'){
+            element.innerHTML = JSON.stringify(r, null, 2);
+        } else {
+            element.innerHTML = r;
+        }
 
         document.getElementById('logger').appendChild(element);
     }
-    console.log = (r) => logger(r);
+    console.log = (r) => logger(r, [typeof r]);
     console.info = (r) => logger(r);
-    console.error = (r) => logger(r);
+    console.error = (r) => logger(r, ['error']);
 
 `
     return showLogger ? logger : ``;
 }
+
+const errorHandler = (code) => {
+    return `
+    <script>
+        ${code}
+        window.onerror = (r) => {
+            console.error('Error: '+ r);
+        }
+        
+    </script>
+    `
+}
+
+const tryCatchWrapper = (code) => {
+    return `
+        try{
+            ${code}
+        } catch (e) {
+            console.error(e.message);
+        }
+    `
+}
+
 
 const consoleHTML = `
     <div id="logger"></div>
@@ -56,7 +85,18 @@ const consoleCSS = `
     ::-webkit-scrollbar-thumb:hover {
         background: rgb(80, 80, 80);
     }
-
+    
+    .error{
+        color: red;
+    }
+    
+    .string{
+    
+    }
+    
+    .number {
+        color: rgb(127, 108, 209)
+    }
 `;
 
 export const ConsoleComponent = (props) => {
@@ -67,12 +107,14 @@ export const ConsoleComponent = (props) => {
         const iframeSrc = 'data:text/html;charset=utf-8,' + encodeURI(`
             <head>
                 <title>What?</title>
-                <style type="text/css">${consoleCSS}</style>
+                <style type="text/css">${consoleCSS}
+                }</style>
             </head>
             <body>
                 ${consoleHTML}
+                ${errorHandler(consoleJSHeader(showLogger))}
                 <script type="text/javascript">
-                    ${consoleJSHeader(showLogger)}${code}
+                    ${tryCatchWrapper(code)}
                 </script>
             </body>
         `);
